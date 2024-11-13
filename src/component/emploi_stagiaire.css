@@ -7,9 +7,12 @@
     padding: 10px;
     min-height: 50px;
   }
+
+
   
   .session-cell {
-    background-color: #f0f8ff;
+  padding: 10px;
+  background-color: #f4f4f4;
     font-weight: bold;
     text-align: center;
     vertical-align: middle;
@@ -18,5 +21,60 @@
   
   .table td:empty {
     border: 1px solid #dee2e6;
+  }
+  .emploi-du-temps {
+    font-family: Arial, sans-serif;
+  }
+  
+  .header-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+  }
+  
+  .logo-section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .logo {
+    max-width: 100px;
+    margin-bottom: 10px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  h2 {
+    font-size: 18px;
+    color: #666;
+    margin-top: 5px;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+  
+  .session-cell {
+    background-color: #f4f4f8;
+    font-weight: bold;
   }
   
