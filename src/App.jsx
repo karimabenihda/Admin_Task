@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Page from './component/Page'
 import DisplayGroups from './component/Afficher_groupe.jsx'
 import Afficher_formateur from './component/Afficher_formateur.jsx'

@@ -20,7 +20,6 @@ function DisplayGroups() {
         if (Array.isArray(res.data)) {
           const groups = res.data;
           setData(groups);
-          // Extract unique secteurs
           const uniqueSecteurs = [...new Set(groups.map((group) => group.secteur))];
           setSecteurs(uniqueSecteurs);
         } else {
@@ -57,7 +56,7 @@ function DisplayGroups() {
           className="form-select"
         >
           <option value="">Tous les Secteurs</option>
-          {/* Use secteur name as the key if it is unique */}
+
           {secteurs.map((secteur) => (
             <option key={secteur} value={secteur}>
               {secteur}
@@ -74,18 +73,14 @@ function DisplayGroups() {
                 <strong>Filiere:</strong> {group.filiere}
               </p>
               <p>
-                <Link
-                  style={{
+
+              <Link to="/emploi_stagiaire"   style={{
                     textDecoration: 'none',
                     color: '#007bff',
                     backgroundColor: '#ddd',
                     padding: '10px',
                     borderRadius: '10px',
-                  }}
-                  to="/emploi_stagiare"
-                >
-                  Emploi du Stagiaire
-                </Link>
+                  }}>Emploi du Stagiaire</Link>
               </p>
             </div>
           ))
