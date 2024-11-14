@@ -57,7 +57,9 @@ function AfficherFormateur() {
                 <div className="card-body">
                   <h5 className="card-title"><strong>{formateur.full_name}</strong></h5>
                   <p><strong>Modules:</strong> {formateur.modules.join(", ")}</p>
-           <Link  style={{
+                  <Link  
+  to={`/emploi_formateur?formateur=${formateur.full_name}&code=${formateur.code_formateur}`}
+  style={{
     textDecoration: 'none',
     color: '#007bff',
     backgroundColor: '#ddd',
@@ -66,7 +68,11 @@ function AfficherFormateur() {
     margingRight:'-11px',
     width: '190px',
     display: 'inline-block' 
-  }}  to="/emploi_formateur">Emploi du Formateur</Link>
+  }}
+>
+  Emploi du Formateur
+</Link>
+
                 </div>
               </div>
             </div>

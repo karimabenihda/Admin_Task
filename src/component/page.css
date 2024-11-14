@@ -3,7 +3,7 @@
     gap: 20px; 
     justify-content: center; 
     flex-wrap: wrap; 
-    align-items: flex-start; /* Aligns items to the top */
+    align-items: flex-start; 
 }
 
 .text-start {

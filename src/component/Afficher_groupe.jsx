@@ -16,7 +16,6 @@ function DisplayGroups() {
     axios
       .get('http://localhost:3000/groupe')
       .then((res) => {
-        console.log(res.data);
         if (Array.isArray(res.data)) {
           const groups = res.data;
           setData(groups);
@@ -74,7 +73,8 @@ function DisplayGroups() {
               </p>
               <p>
 
-              <Link to="/emploi_stagiaire"   style={{
+              <Link  to={`/emploi_stagiaire?groupe=${group.intituleGroupe}&filiere=${group.filiere}`}
+   style={{
                     textDecoration: 'none',
                     color: '#007bff',
                     backgroundColor: '#ddd',

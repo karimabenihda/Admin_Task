@@ -9,7 +9,10 @@
   }
 
 
-  
+  .form-group{
+    display: flex;
+    margin: 10px;
+  }
   .session-cell {
   padding: 10px;
   background-color: #f4f4f4;
@@ -46,17 +49,17 @@
     margin-bottom: 10px;
   }
   
-  h1 {
-    font-size: 24px;
-    margin: 0;
-  }
+ .items{
+  display: flex;
+  justify-content: space-between;
+ }
+ 
   
-  h2 {
-    font-size: 18px;
-    color: #666;
-    margin-top: 5px;
-  }
-  
+.ofppt{
+  position: absolute;
+}
+
+
   .table-responsive {
     overflow-x: auto;
   }

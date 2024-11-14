@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './emploi_stagiaire.css';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import Logo from '../Logo.svg';
 
-function Emploi_stagiaire() {
-  const { filiere, groupe } = useParams();
+function Emploi_formateur() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const fullName = queryParams.get('full_name');
+
   const [showModal, setShowModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [formateurName, setFormateurName] = useState('');
+  const [groupeName, setgroupeName] = useState('');
   const [sessionName, setSessionName] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -22,17 +26,31 @@ function Emploi_stagiaire() {
   });
   const [editingSession, setEditingSession] = useState(null);
 
+  useEffect(() => {
+    const savedSchedule = localStorage.getItem('emploi_formateur_schedule');
+    if (savedSchedule) {
+      const parsedSchedule = JSON.parse(savedSchedule);
+      setSchedule(parsedSchedule);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(schedule).length) {
+      localStorage.setItem('emploi_formateur_schedule', JSON.stringify(schedule));
+    }
+  }, [schedule]);
+
   const handleOpenModal = (row, col) => {
     const session = schedule[row] && schedule[row][col];
     if (session) {
-      setFormateurName(session.formateurName || '');
+      setgroupeName(session.groupeName || '');
       setSessionName(session.sessionName || '');
       setStartTime(col);
       setEndTime(session.endTime || '');
-      setSale(session.sale || '');  
+      setSale(session.sale || '');
       setEditingSession(session);
     } else {
-      setFormateurName('');
+      setgroupeName('');
       setSessionName('');
       setStartTime('');
       setEndTime('');
@@ -45,7 +63,7 @@ function Emploi_stagiaire() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setFormateurName('');
+    setgroupeName('');
     setSessionName('');
     setStartTime('');
     setEndTime('');
@@ -59,13 +77,15 @@ function Emploi_stagiaire() {
       return;
     }
 
-    setSchedule((prev) => ({
-      ...prev,
+    const newSchedule = {
+      ...schedule,
       [selectedDay]: {
-        ...prev[selectedDay],
-        [startTime]: { formateurName, sessionName, endTime, sale }
+        ...schedule[selectedDay],
+        [startTime]: { groupeName, sessionName, endTime, sale }
       }
-    }));
+    };
+
+    setSchedule(newSchedule);
     handleCloseModal();
   };
 
@@ -75,20 +95,22 @@ function Emploi_stagiaire() {
       return;
     }
 
-    setSchedule((prev) => {
-      const updatedSchedule = { ...prev };
-      updatedSchedule[selectedDay] = {
-        ...updatedSchedule[selectedDay],
-        [startTime]: { formateurName, sessionName, endTime, sale }
-      };
-      return updatedSchedule;
-    });
+    const updatedSchedule = {
+      ...schedule,
+      [selectedDay]: {
+        ...schedule[selectedDay],
+        [startTime]: { groupeName, sessionName, endTime, sale }
+      }
+    };
+
+    setSchedule(updatedSchedule);
     handleCloseModal();
   };
 
   const handleDeleteSession = () => {
     const updatedSchedule = { ...schedule };
-    delete updatedSchedule[selectedDay][startTime]; 
+    delete updatedSchedule[selectedDay][startTime];
+
     setSchedule(updatedSchedule);
     handleCloseModal();
   };
@@ -97,36 +119,21 @@ function Emploi_stagiaire() {
     const session = schedule[day][time];
     return session ? (
       <td
-        key={`${day}-${time}`}  
+        key={`${day}-${time}`}
         colSpan={calculateSpan(time, session.endTime)}
         className="session-cell"
-        onClick={() => handleOpenModal(day, time)} 
+        onClick={() => handleOpenModal(day, time)}
       >
         <strong>{session.sessionName}</strong> <br />
-        {session.formateurName} <br />
-        <p>{session.sale}</p> 
+        {session.groupeName} <br />
+        <p>{session.sale}</p>
       </td>
     ) : (
       <td
-        key={`${day}-${time}`} 
+        key={`${day}-${time}`}
         onClick={() => handleOpenModal(day, time)}
       ></td>
     );
-  };
-  
-
-  const cleanUpSchedule = () => {
-    setSchedule((prevSchedule) => {
-      const cleanedSchedule = { ...prevSchedule };
-  
-      Object.keys(cleanedSchedule).forEach((day) => {
-        if (Object.keys(cleanedSchedule[day]).length === 0) {
-          delete cleanedSchedule[day];
-        }
-      });
-  
-      return cleanedSchedule;
-    });
   };
 
   const calculateSpan = (start, end) => {
@@ -137,15 +144,29 @@ function Emploi_stagiaire() {
 
   return (
     <div>
+      <h6 className="ofppt">
+        <img src={Logo} alt="ofppt" style={{ width: '90px' }} /> <br />
+        Souss-Massa <br />
+        ISTA AIT MELLOUL
+      </h6>
+      <h1>
+        <strong>Emploi du Temps</strong>
+      </h1>
+      <h5>2024/2025</h5>
+      <div className="items">
+        <h5>
+       
+        </h5>
+        <h5>
+          <b>Formateur: </b>
+          {fullName}
+        </h5>
+      </div>
       <div className="table-responsive">
-        <h2>Emploi du Temps</h2><br />
-        <h2>2024/2025</h2>
-        <h4><b>Filière:</b>{filiere} </h4>
-        <h5><b>Groupe</b>{groupe}</h5>
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Day / Time</th>
+              <th>Time / Day</th>
               <th>08:30-09:30</th>
               <th>09:30-10:30</th>
               <th>10:30-11:30</th>
@@ -176,12 +197,13 @@ function Emploi_stagiaire() {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">{editingSession ? `Modifier la Séance de ${selectedDay}` : `Ajouter une Séance Pour le ${selectedDay}`}</h5>
+                <h5 className="modal-title">
+                  {editingSession ? `Modifier la Séance de ${selectedDay}` : `Ajouter une Séance Pour le ${selectedDay}`}
+                </h5>
               </div>
               <div className="modal-body">
-
-              <div className="form-group">
-                  <label>Nom de la Seance</label>
+                <div className="form-group">
+                  <label>Nom de la Séance: </label>
                   <input
                     type="text"
                     className="form-control"
@@ -191,17 +213,17 @@ function Emploi_stagiaire() {
                 </div>
 
                 <div className="form-group">
-                  <label>Nom du Formateur</label>
+                  <label>Nom du Groupe: </label>
                   <input
                     type="text"
                     className="form-control"
-                    value={formateurName}
-                    onChange={(e) => setFormateurName(e.target.value)}
+                    value={groupeName}
+                    onChange={(e) => setgroupeName(e.target.value)}
                   />
                 </div>
-              
+
                 <div className="form-group">
-                  <label>La Sale</label>
+                  <label>La Sale: </label>
                   <input
                     type="text"
                     className="form-control"
@@ -211,13 +233,15 @@ function Emploi_stagiaire() {
                 </div>
 
                 <div className="form-group">
-                  <label>Heure de départ</label>
+                  <label>Heure de départ: </label>
                   <select
                     className="form-control"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                   >
-                    <option value="" disabled>Sélectionnez L'Heure de Départ</option>
+                    <option value="" disabled>
+                      Sélectionnez L'Heure de Départ
+                    </option>
                     <option value="08:30">08:30</option>
                     <option value="09:30">09:30</option>
                     <option value="10:30">10:30</option>
@@ -231,14 +255,17 @@ function Emploi_stagiaire() {
                     <option value="18:30">18:30</option>
                   </select>
                 </div>
+
                 <div className="form-group">
-                  <label>Heure de Fin</label>
+                  <label>Heure de Fin: </label>
                   <select
                     className="form-control"
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                   >
-                    <option value="">Sélectionnez L'Heure de Fin</option>
+                    <option value="" disabled>
+                      Sélectionnez L'Heure de Fin
+                    </option>
                     <option value="09:30">09:30</option>
                     <option value="10:30">10:30</option>
                     <option value="11:30">11:30</option>
@@ -253,7 +280,11 @@ function Emploi_stagiaire() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleCloseModal}
+                >
                   Fermer
                 </button>
                 <button
@@ -261,10 +292,14 @@ function Emploi_stagiaire() {
                   className="btn btn-primary"
                   onClick={editingSession ? handleEditSession : handleAddSession}
                 >
-                  {editingSession ? 'Enregistrer' : 'Ajouter la Séance'}
+                  {editingSession ? 'Modifier' : 'Ajouter'}
                 </button>
                 {editingSession && (
-                  <button type="button" className="btn btn-danger" onClick={handleDeleteSession}>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={handleDeleteSession}
+                  >
                     Supprimer
                   </button>
                 )}
@@ -277,4 +312,4 @@ function Emploi_stagiaire() {
   );
 }
 
-export default Emploi_stagiaire;
+export default Emploi_formateur;
